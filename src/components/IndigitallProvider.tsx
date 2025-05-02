@@ -2,15 +2,49 @@
 
 import { useEffect } from 'react'
 
+// Define types for Indigitall SDK interfaces
+interface DeviceInfo {
+  id?: string
+  platform?: string
+  [key: string]: unknown
+}
+
+interface Permissions {
+  push?: boolean
+  location?: boolean
+  [key: string]: unknown
+}
+
+type PermissionCallback = (permission: string) => void
+type ErrorCallback = (error: unknown) => void
+type LocationCallback = (location: Record<string, unknown>) => void
+type InitCallback = (permissions: Permissions, device: DeviceInfo) => void
+type UserRegisteredCallback = (device: DeviceInfo) => void
+
+interface IndigitallAPI {
+  init: (config: {
+    appKey: string
+    urlDeviceApi: string
+    workerPath: string
+    requestLocation: boolean
+    onInitialized: InitCallback
+    onNewUserRegistered: UserRegisteredCallback
+    onLocationUpdated: LocationCallback
+    onError: ErrorCallback
+    requestPushPermission: PermissionCallback
+    requestLocationPermission: PermissionCallback
+  }) => void
+}
+
 declare global {
   interface Window {
-    indigitall: any
-    onIndigitallInitialized?: (permissions: any, device: any) => void
-    onNewUserRegistered?: (device: any) => void
-    onLocationUpdated?: (location: any) => void
-    onError?: (error: any) => void
-    requestPushPermission?: (permission: any) => void
-    requestLocationPermission?: (permission: any) => void
+    indigitall: IndigitallAPI
+    onIndigitallInitialized?: InitCallback
+    onNewUserRegistered?: UserRegisteredCallback
+    onLocationUpdated?: LocationCallback
+    onError?: ErrorCallback
+    requestPushPermission?: PermissionCallback
+    requestLocationPermission?: PermissionCallback
   }
 }
 
@@ -35,7 +69,6 @@ const IndigitallProvider = () => {
             console.log('Push Permission:', permissions.push)
             console.log('Location Permission:', permissions.location)
             console.log('Device Info:', device)
-            
           }
 
           window.onLocationUpdated = (location) => {
@@ -55,16 +88,16 @@ const IndigitallProvider = () => {
           }
 
           window.indigitall.init({
-            appKey: '86893ae1-008d-4973-91f0-63a5c3f6b456', // Replace with real key
+            appKey: '86893ae1-008d-4973-91f0-63a5c3f6b456',
             urlDeviceApi: 'https://am1.device-api.indigitall.com/v1',
             workerPath: '/indigitall/worker.min.js',
             requestLocation: true,
-            onInitialized: window.onIndigitallInitialized,
-            onNewUserRegistered: window.onNewUserRegistered,
-            onLocationUpdated: window.onLocationUpdated,
-            onError: window.onError,
-            requestPushPermission: window.requestPushPermission,
-            requestLocationPermission: window.requestLocationPermission,
+            onInitialized: window.onIndigitallInitialized!,
+            onNewUserRegistered: window.onNewUserRegistered!,
+            onLocationUpdated: window.onLocationUpdated!,
+            onError: window.onError!,
+            requestPushPermission: window.requestPushPermission!,
+            requestLocationPermission: window.requestLocationPermission!,
           })
         } else {
           console.warn('Push notifications not granted by user.')
