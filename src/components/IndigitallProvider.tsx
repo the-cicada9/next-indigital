@@ -54,6 +54,10 @@ const IndigitallProvider = () => {
       const script = document.createElement('script')
       script.src = '/indigitall/sdk.min.js'
       script.async = true
+
+      const appKey = process.env.NEXT_PUBLIC_INDIGITALL_API_KEY!;
+      const urlDeviceApi = process.env.NEXT_PUBLIC_DEVICE_URL_API!;
+      
       script.onload = async () => {
         console.log('Indigitall SDK loaded')
 
@@ -88,8 +92,8 @@ const IndigitallProvider = () => {
           }
 
           window.indigitall.init({
-            appKey: process.env.INDIGITALL_API_KEY!,
-            urlDeviceApi: process.env.DEVICE_URL_API!,
+            appKey,
+            urlDeviceApi,
             workerPath: '/indigitall/worker.min.js',
             requestLocation: true,
             onInitialized: window.onIndigitallInitialized!,
