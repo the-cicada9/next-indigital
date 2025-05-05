@@ -88,8 +88,8 @@ const IndigitallProvider = () => {
           }
 
           window.indigitall.init({
-            appKey: process.env.INDIGITALL_API_KEY,
-            urlDeviceApi: process.env.DEVICE_URL_API,
+            appKey: process.env.INDIGITALL_API_KEY!,
+            urlDeviceApi: process.env.DEVICE_URL_API!,
             workerPath: '/indigitall/worker.min.js',
             requestLocation: true,
             onInitialized: window.onIndigitallInitialized!,
